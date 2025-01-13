@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stone-Paper-Scissor</title>
+    <style>
+      body {
+        text-align: center;
+        background-color: rgb(158, 245, 245);
+      }
+      h1 {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      }
+      .choice-button {
+        height: 150px;
+        width: 150px;
+        border: none;
+        margin: 10px;
+        background-color: rgb(244, 249, 248);
+        border-radius: 20px;
+        cursor: pointer;
+      }
+      .choice-image {
+        height: 90%;
+      }
+      .reset-button {
+        height: 30px;
+        width: 80px;
+        background-color: rgb(208, 204, 204);
+        border: 1.5px solid black;
+        border-radius: 5px;
+      }
+    </style>
+</head>
+<body>
+    <h1>Stone-Paper-Scissor</h1>
+
+    <button class="choice-button" onclick="
+    let comChoice = generateComChoice();
+    let resultMsg = getResult('Stone', comChoice);
+    showResult('Stone', comChoice, resultMsg);
+    ">
+      <img src="images/stonek.avif" alt="Stone Image"
+      class="choice-image">
+    </button>
+
+    <button class="choice-button" onclick="
+    comChoice = generateComChoice();
+    resultMsg = getResult('Paper', comChoice)
+    showResult('Paper', comChoice, resultMsg);
+    ">
+      <img src="images/paper.webp" alt="Paper Image"
+      class="choice-image">
+    </button>
+
+    <button class="choice-button" onclick="
+    comChoice = generateComChoice();
+    resultMsg = getResult('Scissor', comChoice);
+    showResult('Scissor', comChoice, resultMsg);
+    ">
+      <img src="images/scis.webp" alt="Scissor Image"
+      class="choice-image">
+    </button>
+
+    
+
+    <h3 id="user-move"></h3>
+    <h3 id="computer-move"></h3>
+    <h3 id="result"></h3>
+    <h3 id="score"></h3>
+
+
+    <button class="reset-button" onclick="localStorage.clear()
+        resetScore();
+    ">Reset</button>
+
+    <script>
+        let scoreStr = localStorage.getItem('Score');
+        let score;
+        resetScore(scoreStr);
+
+        function resetScore(scoreStr) {
+          score = scoreStr ? JSON.parse(scoreStr) : {
+            win: 0,
+            lost: 0,
+            tie: 0,
+          };
+
+          score.displayScore = function() {
+          return `Win:${score.win}, Lost:${score.lost}, Tie:${score.tie}`
+          }; 
+
+          showResult();
+
+        }
+      
+        function generateComChoice() {
+          //this generates random number btwn 0 and 3
+          let randomNum = Math.random() * 3;
+          let comChoice;
+          if (randomNum > 0 && randomNum <=1) {
+            comChoice = 'Stone';
+          } else if (randomNum > 1 && randomNum <=2 ) {
+            comChoice = 'Paper';
+          } else {
+            comChoice = 'Scissor';
+          }
+          return comChoice;
+        }
+
+        function getResult(userMove, computermove) {
+            if(userMove === 'Stone') {
+             if(computermove === 'Stone') {
+               score.tie++; 
+               return 'Tie';
+             } else if (computermove === 'Paper') {
+               score.lost++; 
+               return 'Computer wins';
+             } else if(computermove === 'Scissor') {
+               score.win++; 
+               return 'You win';
+             }
+
+            } else if(userMove === 'Paper') {
+              if(comChoice === 'Stone') {
+                score.win++; 
+                return 'You win';
+              } else if (comChoice === 'Paper') {
+                score.tie++; 
+                return 'Tie';
+              } else if(comChoice === 'Scissor') {
+                score.lost++; 
+                return 'Computer wins';
+              }
+
+            } else {
+              if(comChoice === 'Stone') {
+                score.lost++; 
+                return 'Computer wins';
+              } else if (comChoice === 'Paper') {
+                score.win++; 
+                return 'You win';
+              } else if(comChoice === 'Scissor') {
+                score.tie++; 
+                return 'Tie';
+              }
+            }
+        }
+
+        function showResult(userMove, comChoice, result) {
+            // console.log(score);
+            localStorage.setItem('Score', JSON.stringify(score));
+            document.querySelector('#user-move').innerText = userMove ? `You choose ${userMove}` : '';
+
+            document.querySelector('#computer-move').innerText = comChoice ? `Computer's choice is ${comChoice}` : '';
+
+            document.querySelector('#result').innerText = result || '';
+
+            document.querySelector('#score').innerText = score.displayScore();
+          
+        }
+    </script>
+</body>
+</html>
